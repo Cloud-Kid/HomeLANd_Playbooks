@@ -9,7 +9,7 @@
         name: neofetch
         state: latest
         
-    - name: Install crowdesec
+    - name: Install crowdsec
       apt:
-        name: crowdesec
+        name: crowdsec
         state: latest
