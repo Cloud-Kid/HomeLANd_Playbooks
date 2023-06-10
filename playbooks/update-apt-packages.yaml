@@ -11,7 +11,6 @@
     - name: Reboot the system
       reboot:
         reboot_timeout: 300
-        post_reboot_delay: 30
-      become: true
+        post_reboot_delay: 60
       async: 0
       poll: 0
