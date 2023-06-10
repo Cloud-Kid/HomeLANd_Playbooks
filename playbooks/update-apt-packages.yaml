@@ -12,6 +12,6 @@
       reboot:
         reboot_timeout: 300
         post_reboot_delay: 30
-      become: false
+      become: true
       async: 0
       poll: 0
