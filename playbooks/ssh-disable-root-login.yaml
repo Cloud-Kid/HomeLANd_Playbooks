@@ -17,6 +17,13 @@
         regexp: '^#PasswordAuthentication yes'
         line: 'PasswordAuthentication no'
       notify: restart sshd
+      
+    - name: Set SSH AuthenticationMethods
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        line: 'AuthenticationMethods publickey'
+      notify: restart sshd
     
   handlers:
     - name: restart sshd
