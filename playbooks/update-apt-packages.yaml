@@ -7,3 +7,11 @@
       apt:
         upgrade: yes
         update_cache: yes
+        
+    - name: Reboot the system
+      reboot:
+        reboot_timeout: 300
+        post_reboot_delay: 30
+      become: false
+      async: 0
+      poll: 0
