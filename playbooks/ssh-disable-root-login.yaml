@@ -1,18 +1,22 @@
 ---
 - hosts: all
 
-  become: true
-  tasks:
-    - name: Update SSHD config to disable root login
-      ini_file:
-        path: /etc/ssh/sshd_config
-        section: 'sshd'
-        option: PermitRootLogin
-        value: no
-      notify: restart sshd
+- name: Disable SSH root login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#PermitRootLogin'
+    line: 'PermitRootLogin no'
+   notify: restart sshd
 
-  handlers:
-    - name: restart sshd
-      service:
-        name: sshd
-        state: restarted
+- name: Disable SSH password authentication
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#PasswordAuthentication yes'
+    line: 'PasswordAuthentication no'
+   notify: restart sshd
+    
+handlers:
+- name: restart sshd
+    service:
+      name: sshd
+      state: restarted
