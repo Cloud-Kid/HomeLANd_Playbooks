@@ -1,0 +1,15 @@
+---
+- hosts: all
+
+  become: true
+  tasks:
+        
+    - name: Install neofetch
+      apt:
+        name: neofetch
+        state: latest
+        
+    - name: Install crowdesec
+      apt:
+        name: crowdesec
+        state: latest
