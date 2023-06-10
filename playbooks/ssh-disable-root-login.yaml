@@ -3,16 +3,16 @@
 
   become: true
   tasks:
-    - name: Update SSHD config to disable root login
+    - name: Update SSH config to disable root login
       ini_file:
-        path: /etc/ssh/sshd_config
-        section: 'sshd'
+        path: /etc/ssh/ssh_config
+        section: 'ssh'
         option: PermitRootLogin
         value: no
-      notify: restart sshd
+      notify: restart ssh
 
   handlers:
-    - name: restart sshd
+    - name: restart ssh
       service:
-        name: sshd
+        name: ssh
         state: restarted
