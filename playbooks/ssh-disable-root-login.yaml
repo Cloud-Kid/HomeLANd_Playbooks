@@ -4,21 +4,21 @@
   become: true
   tasks:
 
-    - name: Disable SSH root login
+    - name: Disable SSHd root login
       lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#PermitRootLogin'
         line: 'PermitRootLogin no'
       notify: restart sshd
 
-    - name: Disable SSH password authentication
+    - name: Disable SSHd password authentication
       lineinfile:
         path: /etc/ssh/sshd_config
         regexp: '^#PasswordAuthentication yes'
         line: 'PasswordAuthentication no'
       notify: restart sshd
       
-    - name: Set SSH AuthenticationMethods
+    - name: Set SSHd AuthenticationMethods
       lineinfile:
         path: /etc/ssh/sshd_config
         state: present
