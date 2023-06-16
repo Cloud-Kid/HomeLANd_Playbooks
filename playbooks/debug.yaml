@@ -21,7 +21,7 @@
     - name: Set SSHd AuthenticationMethods
       lineinfile:
         path: /etc/ssh/sshd_config
-        state: present
+        state: absent
         line: 'AuthenticationMethods publickey'
       notify: restart sshd
     
