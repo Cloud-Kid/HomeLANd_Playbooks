@@ -7,16 +7,15 @@
       - snapd
       
   tasks:
-    - name: Stop and disable services from list, and remove/purge packages
-      block:
-        - name: Stop and disable services from list
-          service:
-            name: "{{ item }}"
-            state: stopped
-            enabled: false
-        - name: Remove and purge packages from list
-          ansible.builtin.apt:
-            name: "{{ item }}"
-            state: absent
-            purge: true
-        loop: "{{ packages_list }}"
+    - name: Stop and disable services from list
+      service:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+        
+    - name: Remove and purge packages from list
+      ansible.builtin.apt:
+        name: "{{ item }}"
+        state: absent
+        purge: true
+    loop: "{{ packages_list }}"
