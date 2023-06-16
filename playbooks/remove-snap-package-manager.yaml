@@ -21,7 +21,7 @@
         name: "{{ item }}"
         state: stopped
         enabled: false
-        ignore_errors: yes
+      ignore_errors: yes
 
     - name: Remove and purge packages from list
       ansible.builtin.apt:
