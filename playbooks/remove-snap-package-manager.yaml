@@ -21,13 +21,8 @@
         name: "{{ item }}"
         state: stopped
         enabled: false
-      failed_when:
-        - stop_service.failed == true
-        - '"Could not find the requested service" not in stop_service.msg'
-        # the order is important, only failed == true, there will be
-        # attribute 'msg' in the result
-      loop: "{{ packages_list }}"
-        
+        ignore_errors: yes
+
     - name: Remove and purge packages from list
       ansible.builtin.apt:
         name: "{{ item }}"
