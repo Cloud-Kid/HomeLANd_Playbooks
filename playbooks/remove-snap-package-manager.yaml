@@ -5,21 +5,21 @@
   vars:
     stop_services:
       - snapd.service
+      
   tasks:
-    - service_facts:
-  
-    - name: stop and disable snapd
+    #- service_facts:
+    - name: stop and disable services from list
       service:
-        name: "{{ item }}"
+        name: "{{ stop_services }}"
         state: stopped
         enabled: false
-      when: "item in service_names"
-      loop: "{{ stop_services }}"
-      vars:
-        service_names: "{{ services|dict2items|map(attribute='value.name')|list }}"
+      #when: "item in service_names"
+      #loop: "{{ stop_services }}"
+      #vars:
+      #  service_names: "{{ services|dict2items|map(attribute='value.name')|list }}"
 
     - name: Remove "snapd" package
       ansible.builtin.apt:
-        name: snapd
+        name: "{{ stop_services }}"
         state: absent
         purge: true
