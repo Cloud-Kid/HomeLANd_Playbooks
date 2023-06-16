@@ -21,8 +21,11 @@
         name: "{{ item }}"
         state: stopped
         enabled: false
-      ignore_errors: yes
-
+        failed_when:
+          - stop_service.failed == true
+          - '"Could not find the requested service" not in stop_service.msg'
+          # the order is important, only failed == true, there will be
+          # attribute 'msg' in the result
       loop: "{{ packages_list }}"
         
     - name: Remove and purge packages from list
@@ -30,9 +33,6 @@
         name: "{{ item }}"
         state: absent
         purge: true
-      #ignore_errors: yes
-
-        
       loop: "{{ packages_list }}"
 
     - name: Delete content & directory (For snapd)
