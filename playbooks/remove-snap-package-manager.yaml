@@ -29,6 +29,8 @@
         name: "{{ item }}"
         state: absent
         purge: true
+      ignore_errors: yes
+
         
       loop: "{{ packages_list }}"
 
