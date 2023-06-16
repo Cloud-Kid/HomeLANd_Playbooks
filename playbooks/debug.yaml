@@ -1,0 +1,32 @@
+---
+- hosts: all
+
+  become: true
+  tasks:
+
+    - name: Enable SSHd root login
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#PermitRootLogin'
+        line: 'PermitRootLogin yes'
+      notify: restart sshd
+
+    - name: Enable SSHd password authentication
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        regexp: '^#PasswordAuthentication no'
+        line: 'PasswordAuthentication yes'
+      notify: restart sshd
+      
+    - name: Set SSHd AuthenticationMethods
+      lineinfile:
+        path: /etc/ssh/sshd_config
+        state: present
+        line: 'AuthenticationMethods publickey'
+      notify: restart sshd
+    
+  handlers:
+    - name: restart sshd
+      service:
+        name: sshd
+        state: restarted
