@@ -13,7 +13,7 @@
         state: stopped
         enabled: false
 
-    loop: "{{ packages_list }}"
+      loop: "{{ packages_list }}"
         
     - name: Remove and purge packages from list
       ansible.builtin.apt:
@@ -21,4 +21,4 @@
         state: absent
         purge: true
         
-    loop: "{{ packages_list }}"
+      loop: "{{ packages_list }}"
