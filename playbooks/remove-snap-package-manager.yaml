@@ -10,11 +10,11 @@
     #- service_facts:
     - name: stop and disable services from list
       service:
-        name: "{{ stop_services }}"
+        name: "{{ item }}"
         state: stopped
         enabled: false
       #when: "item in service_names"
-      #loop: "{{ stop_services }}"
+      loop: "{{ stop_services }}"
       #vars:
       #  service_names: "{{ services|dict2items|map(attribute='value.name')|list }}"
 
