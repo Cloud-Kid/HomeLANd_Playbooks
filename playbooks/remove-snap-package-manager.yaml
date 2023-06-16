@@ -5,6 +5,15 @@
   vars:
     packages_list:
       - snapd
+
+    snap_paths:
+      - /snap
+      - /var/snap
+      - /var/lib/snapd 
+      - /var/cache/snapd 
+      - /usr/lib/snapd 
+      - /root/snap 
+      - ~/snap
       
   tasks:
     - name: Stop and disable services from list
@@ -22,3 +31,10 @@
         purge: true
         
       loop: "{{ packages_list }}"
+
+    - name: Delete content & directory (For snapd)
+      ansible.builtin.file:
+        state: absent
+        path: "{{ item }}"
+
+      loop: "{{ snap_paths }}"
