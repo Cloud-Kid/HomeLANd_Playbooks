@@ -18,7 +18,7 @@
       vars:
         service_names: "{{ services|dict2items|map(attribute='value.name')|list }}"
 
-    - name: Remove "snap" package
+    - name: Remove "{{ item }}" package
       ansible.builtin.apt:
         name: "{{ item }}"
         state: absent
