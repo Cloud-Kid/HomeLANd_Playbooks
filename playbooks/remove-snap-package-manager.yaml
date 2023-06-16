@@ -5,15 +5,15 @@
     stop_services:
       - snapd.service
       #- other-services
-tasks:
-  - service_facts:
-
-  - name: stop and disable a service
-    service:
-      name: "{{ item }}"
-      state: stopped
-      enabled: false
-    when: "item in service_names"
-    loop: "{{ stop_services }}"
-    vars:
-      service_names: "{{ services|dict2items|map(attribute='value.name')|list }}"
+  tasks:
+    - service_facts:
+  
+    - name: stop and disable a service
+      service:
+        name: "{{ item }}"
+        state: stopped
+        enabled: false
+      when: "item in service_names"
+      loop: "{{ stop_services }}"
+      vars:
+        service_names: "{{ services|dict2items|map(attribute='value.name')|list }}"
