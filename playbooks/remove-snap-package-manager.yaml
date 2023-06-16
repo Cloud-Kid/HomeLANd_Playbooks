@@ -21,6 +21,7 @@
         name: "{{ item }}"
         state: stopped
         enabled: false
+      ignore_errors: yes
 
       loop: "{{ packages_list }}"
         
@@ -29,7 +30,7 @@
         name: "{{ item }}"
         state: absent
         purge: true
-      ignore_errors: yes
+      #ignore_errors: yes
 
         
       loop: "{{ packages_list }}"
