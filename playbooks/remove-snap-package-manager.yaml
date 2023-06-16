@@ -8,6 +8,7 @@
       # - other-packages
       
   tasks:
+    - name: Stop and disable services from list, and remove/purge packages
       block:
         - name: Stop and disable services from list
           service:
