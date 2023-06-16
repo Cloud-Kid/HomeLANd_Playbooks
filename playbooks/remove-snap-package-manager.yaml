@@ -3,7 +3,7 @@
   gather_facts: false
   become: true
   vars:
-    packages-list:
+    packages_list:
       - snapd
       
   tasks:
@@ -19,4 +19,4 @@
         state: absent
         purge: true
         
-      loop: "{{ packages-list }}"
+      loop: "{{ packages_list }}"
