@@ -18,9 +18,8 @@
       vars:
         service_names: "{{ services|dict2items|map(attribute='value.name')|list }}"
 
-    - name: Remove "{{ item }}" package
+    - name: Remove "snapd" package
       ansible.builtin.apt:
-        name: "{{ item }}"
+        name: snapd
         state: absent
         purge: true
-      loop: "{{ stop_services }}"
