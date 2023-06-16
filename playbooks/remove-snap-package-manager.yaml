@@ -5,7 +5,6 @@
   vars:
     packages_list:
       - snapd
-      # - other-packages
       
   tasks:
     - name: Stop and disable services from list, and remove/purge packages
