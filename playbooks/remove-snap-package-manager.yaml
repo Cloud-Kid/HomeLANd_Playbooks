@@ -5,21 +5,20 @@
   vars:
     packages_list:
       - snapd
+      # - other-packages
       
   tasks:
-    - name: Stop and disable services from list
-      service:
-        name: "{{ item }}"
-        state: stopped
-        enabled: false
-
-      loop: "{{ packages_list }}"
-
-
-    - name: Remove and purge packages from list
-      ansible.builtin.apt:
-        name: "{{ item }}"
-        state: absent
-        purge: true
-        
-      loop: "{{ packages_list }}"
+      block:
+        - name: Stop and disable services from list
+          service:
+            name: "{{ item }}"
+            state: stopped
+            enabled: false
+            
+        - name: Remove and purge packages from list
+          ansible.builtin.apt:
+            name: "{{ item }}"
+            state: absent
+            purge: true
+            
+        loop: "{{ packages_list }}"
