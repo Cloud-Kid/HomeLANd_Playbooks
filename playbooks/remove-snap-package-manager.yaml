@@ -1,10 +1,10 @@
 ---
 - hosts: all
-gather_facts: false
-vars:
-  stop_services:
-    - snapd.service
-    #- other-services
+  gather_facts: false
+  vars:
+    stop_services:
+      - snapd.service
+      #- other-services
 tasks:
   - service_facts:
 
