@@ -12,3 +12,4 @@
       reboot:
         reboot_timeout: 300
         post_reboot_delay: 60
+        ignore_errors: true
