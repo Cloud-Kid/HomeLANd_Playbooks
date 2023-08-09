@@ -9,7 +9,7 @@
         update_cache: yes
         
     - name: Reboot the system
+      ignore_errors: true
       reboot:
         reboot_timeout: 300
         post_reboot_delay: 60
-        ignore_errors: true
