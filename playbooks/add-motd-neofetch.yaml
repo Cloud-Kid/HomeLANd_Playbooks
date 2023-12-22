@@ -1,22 +1,20 @@
 ---
 - hosts: all
   tasks:
-  
-    - name: Configure MOTD with Neofetch on Ubuntu
-      become: yes  # To run commands with sudo privileges
+  become: true
     
-      tasks:
-        - name: Install Neofetch
-          apt:
-            name: neofetch
-            state: present
-          when: ansible_distribution == 'Ubuntu'
+  tasks:
+    - name: Install Neofetch
+      apt:
+        name: neofetch
+        state: present
+        when: ansible_distribution == 'Ubuntu'
     
-        - name: Create Neofetch MOTD script
-          copy:
-            content: |
-              #!/bin/bash
-              neofetch
-            dest: /etc/update-motd.d/99-neofetch
-            mode: '0755'
-          when: ansible_distribution == 'Ubuntu'
+    - name: Create Neofetch MOTD script
+      copy:
+        content: |
+          #!/bin/bash
+          neofetch
+        dest: /etc/update-motd.d/99-neofetch
+        mode: '0755'
+        when: ansible_distribution == 'Ubuntu'
