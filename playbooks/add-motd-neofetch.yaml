@@ -8,7 +8,7 @@
       apt:
         name: neofetch
         state: present
-        when: ansible_distribution == 'Ubuntu'
+      when: ansible_distribution == 'Ubuntu'
     
     - name: Create Neofetch MOTD script
       copy:
@@ -17,4 +17,4 @@
           neofetch
         dest: /etc/update-motd.d/99-neofetch
         mode: '0755'
-        when: ansible_distribution == 'Ubuntu'
+      when: ansible_distribution == 'Ubuntu'
