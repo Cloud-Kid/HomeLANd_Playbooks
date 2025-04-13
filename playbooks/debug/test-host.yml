@@ -1,0 +1,25 @@
+---
+- name: Test Ansible connectivity and environment
+  hosts: all
+  gather_facts: false
+
+  tasks:
+    - name: Ping the host
+      ansible.builtin.ping:
+
+    - name: Check Python version
+      ansible.builtin.command: python3 --version
+      register: python_version
+
+    - name: Display Python version
+      ansible.builtin.debug:
+        msg: "Python version is: {{ python_version.stdout }}"
+
+    - name: Ensure user has home directory
+      ansible.builtin.stat:
+        path: "/home/{{ ansible_user }}"
+      register: user_home
+
+    - name: Show if user home exists
+      ansible.builtin.debug:
+        var: user_home.stat.exists
