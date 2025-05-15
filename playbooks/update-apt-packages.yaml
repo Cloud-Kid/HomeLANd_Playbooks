@@ -1,15 +1,18 @@
 ---
 - hosts: all
-
   become: true
+  become_method: sudo
   tasks:
-    - name: update apt packages
+
+    - name: Update APT package index and upgrade
       apt:
         upgrade: yes
         update_cache: yes
-        
+      become: true
+
     - name: Reboot the system
-      ignore_errors: true
       reboot:
         reboot_timeout: 300
         post_reboot_delay: 60
+      become: true
+      ignore_errors: true
