@@ -8,11 +8,9 @@
       apt:
         upgrade: yes
         update_cache: yes
-      become: true
 
     - name: Reboot the system
       reboot:
         reboot_timeout: 300
         post_reboot_delay: 60
-      become: true
       ignore_errors: true
