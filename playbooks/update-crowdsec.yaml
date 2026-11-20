@@ -6,6 +6,7 @@
 # Only ansible.builtin modules are required.
 
 - name: Maintain CrowdSec on Linux hosts
+  hosts: all
   become: true
   gather_facts: true
   serial: 1
