@@ -3,17 +3,17 @@
   become: true
     
   tasks:
-    - name: Install Neofetch
+    - name: Install Fastfetch
       apt:
-        name: neofetch
+        name: fastfetch
         state: present
       when: ansible_distribution == 'Ubuntu'
     
-    - name: Create Neofetch MOTD script
+    - name: Create MOTD script
       copy:
         content: |
           #!/bin/bash
-          neofetch
-        dest: /etc/update-motd.d/99-neofetch
+          fastfetch
+        dest: /etc/update-motd.d/99-fastfetch
         mode: '0755'
       when: ansible_distribution == 'Ubuntu'
