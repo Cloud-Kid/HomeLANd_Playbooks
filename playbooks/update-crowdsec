@@ -1,0 +1,132 @@
+---
+# CrowdSec maintenance for package-managed Linux hosts.
+# Target the crowdsec_hosts inventory group. Configure SSH and privilege
+# escalation credentials in your automation runner or locally.
+# Ansible Semaphore can run this file as an Ansible task template.
+# Only ansible.builtin modules are required.
+
+- name: Maintain CrowdSec on Linux hosts
+  hosts: crowdsec_hosts
+  become: true
+  gather_facts: true
+  serial: 1
+  any_errors_fatal: true
+
+  vars:
+    crowdsec_firewall_packages:
+      - crowdsec-firewall-bouncer
+      - crowdsec-firewall-bouncer-iptables
+      - crowdsec-firewall-bouncer-nftables
+
+  tasks:
+    - name: Check the package manager and service manager
+      ansible.builtin.assert:
+        that:
+          - ansible_facts['service_mgr'] == 'systemd'
+          - ansible_facts['pkg_mgr'] in ['apt', 'dnf', 'dnf5']
+        fail_msg: >-
+          Run this playbook on a systemd host with a package-managed
+          CrowdSec installation using APT or DNF.
+
+    - name: Gather installed package facts
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Identify the installed firewall bouncer package
+      ansible.builtin.set_fact:
+        installed_firewall_packages: >-
+          {{ crowdsec_firewall_packages
+             | intersect(ansible_facts['packages'].keys() | list) }}
+
+    - name: Check that the engine and one firewall bouncer are installed as packages
+      ansible.builtin.assert:
+        that:
+          - "'crowdsec' in ansible_facts['packages']"
+          - installed_firewall_packages | length == 1
+        fail_msg: >-
+          Install the crowdsec package and one supported firewall bouncer
+          package before running this playbook.
+
+    - name: Upgrade CrowdSec packages with APT
+      ansible.builtin.apt:
+        name: "{{ ['crowdsec'] + installed_firewall_packages }}"
+        state: latest
+        only_upgrade: true
+        fail_on_autoremove: true
+        update_cache: true
+        cache_valid_time: 3600
+        lock_timeout: 120
+      register: crowdsec_apt_upgrade
+      when: ansible_facts['pkg_mgr'] == 'apt'
+
+    - name: Upgrade CrowdSec packages with DNF
+      ansible.builtin.dnf:
+        name: "{{ ['crowdsec'] + installed_firewall_packages }}"
+        state: latest
+        update_only: true
+        update_cache: true
+        lock_timeout: 120
+      register: crowdsec_dnf_upgrade
+      when: ansible_facts['pkg_mgr'] in ['dnf', 'dnf5']
+
+    - name: Update Hub content and verify service health
+      when: not ansible_check_mode
+      block:
+        - name: Refresh the Hub index
+          ansible.builtin.command:
+            argv: [cscli, hub, update]
+          changed_when: false
+
+        - name: Upgrade installed Hub collections, parsers, and scenarios
+          # CrowdSec uses this output in its daily update job to decide
+          # whether to reload its configuration.
+          ansible.builtin.command:
+            argv: [cscli, --error, hub, upgrade]
+          register: crowdsec_hub_upgrade
+          changed_when: crowdsec_hub_upgrade.stdout | trim | length > 0
+
+        - name: Restart CrowdSec after an upgrade
+          ansible.builtin.systemd_service:
+            name: crowdsec.service
+            state: restarted
+          when: >-
+            crowdsec_apt_upgrade is changed
+            or crowdsec_dnf_upgrade is changed
+            or crowdsec_hub_upgrade is changed
+
+        - name: Wait for the CrowdSec Local API to respond
+          ansible.builtin.command:
+            argv: [cscli, lapi, status]
+          register: crowdsec_lapi
+          changed_when: false
+          until: crowdsec_lapi.rc == 0
+          retries: 12
+          delay: 5
+
+        - name: Restart the firewall bouncer after a package upgrade
+          ansible.builtin.systemd_service:
+            name: crowdsec-firewall-bouncer.service
+            state: restarted
+          when: crowdsec_apt_upgrade is changed or crowdsec_dnf_upgrade is changed
+
+        - name: Verify that both systemd services are active
+          ansible.builtin.command:
+            argv: [systemctl, is-active, --quiet, "{{ item }}"]
+          loop:
+            - crowdsec.service
+            - crowdsec-firewall-bouncer.service
+          register: crowdsec_service_status
+          changed_when: false
+          until: crowdsec_service_status.rc == 0
+          retries: 6
+          delay: 5
+
+        - name: Get registered bouncers and their last API pull
+          ansible.builtin.command:
+            argv: [cscli, bouncers, list]
+          register: crowdsec_bouncers
+          changed_when: false
+
+        - name: Show registered bouncers and their last API pull
+          ansible.builtin.debug:
+            var: crowdsec_bouncers.stdout_lines
